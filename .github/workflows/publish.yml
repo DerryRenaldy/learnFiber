@@ -10,19 +10,32 @@ on:
     branches: [ "master" ]
 
 jobs:
-
   build:
+    permissions:
+      contents: write
+      issues: write
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Set up Go
-      uses: actions/setup-go@v3
-      with:
-        go-version: 1.19
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.19
 
-    - name: Build
-      run: go build -v ./...
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          # Explicitly setting an LTS version of Node.js
+          node-version: 18.14.0
 
-    - name: Test
-      run: go test -v ./...
+      - name: Build
+        run: go build -v ./...
+
+      - name: Test
+        run: go test -v ./...
+
+      - name: Release
+        run: npx semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
