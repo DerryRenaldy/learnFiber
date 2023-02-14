@@ -20,7 +20,7 @@ func (ch *CustomersHandler) GetCustomerHandler(c *fiber.Ctx) error {
 	value, err := ch.Service.GetCustomer(c.Context(), req)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fmt.Sprintf(`{"code": %d,"message": %s}`,
-			fiber.ErrInternalServerError, err.Error()))
+			fiber.StatusInternalServerError, err.Error()))
 	}
 
 	var customerDetails *models.CustomerDetailItem
