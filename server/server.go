@@ -5,6 +5,7 @@ import (
 	"github.com/DerryRenaldy/learnFiber/api/v1/handlers"
 	"github.com/DerryRenaldy/learnFiber/api/v1/services"
 	"github.com/DerryRenaldy/learnFiber/pkg/database"
+	"github.com/DerryRenaldy/learnFiber/server/middleware"
 	"github.com/DerryRenaldy/learnFiber/store/mysql/customer"
 	"github.com/DerryRenaldy/logger/logger"
 	"github.com/gofiber/fiber/v2"
@@ -49,7 +50,10 @@ func New(logger logger.ILogger) *Server {
 
 func (s Server) Start() {
 	app := fiber.New(fiber.Config{ColorScheme: fiber.DefaultColors, DisableKeepalive: true, Prefork: true})
-	app.Get("/api/v1/", s.handler.GetCustomerHandler)
+	v1 := app.Group("/api/v1")
+	v1.Use(middleware.ValidateHeaderMiddleware())
+
+	v1.Get("/", s.handler.GetCustomerHandler)
 
 	app.Listen(":3000")
 }

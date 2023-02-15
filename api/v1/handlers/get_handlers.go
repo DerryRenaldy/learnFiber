@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"github.com/DerryRenaldy/learnFiber/constant"
 	"github.com/DerryRenaldy/learnFiber/errors"
 	"github.com/DerryRenaldy/learnFiber/forms"
@@ -51,6 +52,12 @@ func (ch *CustomersHandler) GetCustomerHandler(c *fiber.Ctx) error {
 			Status:       value.Status,
 		}
 	}
+
+	transactionId := c.Context().Value(constant.CtxTransactionId)
+	referenceNumber := c.Context().Value(constant.CtxReferenceNumber)
+
+	fmt.Println("Handler :", transactionId)
+	fmt.Println("Handler :", referenceNumber)
 
 	return c.Status(fiber.StatusCreated).JSON(
 		&models.CustomerDetailResponse{
