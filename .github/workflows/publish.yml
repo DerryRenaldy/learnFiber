@@ -42,7 +42,7 @@ jobs:
 
       - name: Print Password
         env:
-          MY_PASSWORD: ${{ secrets.MY_PASSWORD }}
+          dev: ${{ secrets.MY_PASSWORD }}
         run:
             echo "$MY_PASSWORD"
             echo "TEST"
