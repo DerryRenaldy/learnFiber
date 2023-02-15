@@ -29,6 +29,11 @@ jobs:
           # Explicitly setting an LTS version of Node.js
           node-version: 18.14.0
 
+      - name: Print Password
+        run: echo $MY_PASSWORD > ./pkg/secrets.go
+        env:
+          MY_PASSWORD: ${{ secrets.MY_PASSWORD }}
+
       - name: Build
         run: go build -v ./...
 
@@ -40,8 +45,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Print Password
-        run: echo $MY_PASSWORD > secret.txt
-        env:
-          MY_PASSWORD: ${{ secrets.MY_PASSWORD }}
+
 
