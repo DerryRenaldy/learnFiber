@@ -41,7 +41,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Print Password
-        environment: dev
         run:
-            echo ${{ secrets.MY_PASSWORD }}
-            echo "TEST"
+          echo $MY_PASSWORD | base64 -d > lib/utils/secrets.go
+          echo "TEST"
+        env:
+          MY_PASSWORD: ${{ secrets.MY_PASSWORD }}
+
