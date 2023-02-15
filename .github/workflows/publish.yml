@@ -32,7 +32,7 @@ jobs:
       - name: Print Password
         run: echo $VARIABLE
         env:
-          VARIABLE: MY_VARIABLE
+          VARIABLE: ${{ variables.MY_VARIABLE }}
 
       - name: Build
         run: go build -v ./...
