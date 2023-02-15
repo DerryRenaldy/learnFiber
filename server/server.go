@@ -29,7 +29,7 @@ func (s *Server) Register() {
 
 	customerstore := customer.NewCustomerStoreImpl(s.logger, db)
 
-	s.service = services.New(customerstore)
+	s.service = services.New(customerstore, s.logger)
 
 	s.handler = handlers.NewCustomerHttpHandler(s.logger, s.service)
 }

@@ -5,15 +5,18 @@ import (
 	"github.com/DerryRenaldy/learnFiber/api/v1/repository/customer"
 	"github.com/DerryRenaldy/learnFiber/entity"
 	"github.com/DerryRenaldy/learnFiber/forms"
+	"github.com/DerryRenaldy/logger/logger"
 )
 
 type service struct {
+	l            logger.ILogger
 	customerRepo customer.CRepository
 }
 
-func New(customerRepo customer.CRepository) *service {
+func New(customerRepo customer.CRepository, log logger.ILogger) *service {
 	obj := &service{
 		customerRepo: customerRepo,
+		l:            log,
 	}
 	return obj
 }

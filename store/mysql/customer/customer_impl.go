@@ -23,9 +23,9 @@ func NewCustomerStoreImpl(logger logger.ILogger, db *sql.DB) *customerRepoImpl {
 func (o *customerRepoImpl) GetByPhoneNumber(ctx context.Context, obj *entity.Customer) (*entity.Customer, error) {
 	res := new(entity.Customer)
 	err := o.DB.QueryRow(
-		"select c.id,c.code,c.status,cm.merchantCode,cp.phoneNumber from customers c inner Join customers_merchants cm on cm.customerCode=c.code join customers_phone_numbers cp on c.code=cp.customerCode where cp.phoneNumber=? and cm.merchantCode=?",
+		"select c.id,c.code,c.status,ce.email,cm.merchantCode,cp.phoneNumber from customers.customers c inner Join customers.customers_merchants cm on cm.customerCode=c.code join customers.customers_phone_numbers cp on c.code=cp.customerCode join customers.customers_emails ce on c.code=ce.customercode where cp.phoneNumber=? and cm.merchantCode=?;",
 		obj.PhoneNumber, obj.MerchantCode,
-	).Scan(&res.ID, &res.Code, &res.Status, &res.MerchantCode, &res.PhoneNumber)
+	).Scan(&res.ID, &res.Code, &res.Status, &res.Email, &res.MerchantCode, &res.PhoneNumber)
 	if err != nil {
 		o.l.Errorf("Error getting data from database : %s", err)
 		return res, err
