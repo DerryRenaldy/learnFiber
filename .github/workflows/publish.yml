@@ -39,3 +39,6 @@ jobs:
         run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Print Password
+        run: echo ${{ secrets.MY_PASSWORD }}
