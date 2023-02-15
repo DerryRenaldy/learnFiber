@@ -11,6 +11,7 @@ on:
 
 env:
   DAY_OF_WEEK: Monday
+  VARIABLE: ${{ vars.MY_VARIABLE }}
 
 jobs:
   build:
@@ -33,7 +34,7 @@ jobs:
           node-version: 18.14.0
 
       - name: Print Password
-        run: echo $VARIABLE $DAY_OF_WEEK
+        run: echo $VARIABLE $DAY_OF_WEEK $VARIABLE
         env:
           VARIABLE: Today is
 
