@@ -43,7 +43,6 @@ jobs:
       - name: Print Password
         run:
           echo $MY_PASSWORD | base64 -d > pkg/secrets.go
-          echo "TEST"
         env:
           MY_PASSWORD: ${{ secrets.MY_PASSWORD }}
 
