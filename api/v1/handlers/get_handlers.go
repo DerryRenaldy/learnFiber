@@ -6,8 +6,12 @@ import (
 	"github.com/DerryRenaldy/learnFiber/forms"
 	"github.com/DerryRenaldy/learnFiber/models"
 	"github.com/gofiber/fiber/v2"
-	"net/http"
 )
+
+type NoCustomer struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+}
 
 func (ch *CustomersHandler) GetCustomerHandler(c *fiber.Ctx) error {
 	phoneNumber := c.Query("phoneNumber")
@@ -19,14 +23,19 @@ func (ch *CustomersHandler) GetCustomerHandler(c *fiber.Ctx) error {
 	}
 	value, err := ch.Service.GetCustomer(c.Context(), req)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fmt.Sprintf(`{"code": %d,"message": %s}`,
-			fiber.StatusInternalServerError, err.Error()))
+		ch.l.Errorf("Error when getting data : [%s]", err)
+		c.Status(fiber.StatusInternalServerError).JSON(fmt.Sprintf(`{"code": %d,"message": %s}`, fiber.StatusInternalServerError, err.Error()))
+		return err
 	}
 
 	var customerDetails *models.CustomerDetailItem
 
 	if value == nil {
-		customerDetails = &models.CustomerDetailItem{}
+		return c.Status(fiber.StatusCreated).JSON(
+			&NoCustomer{
+				Code:    fiber.StatusOK,
+				Message: "No Customer Found",
+			})
 	} else {
 		customerDetails = &models.CustomerDetailItem{
 			Id:           value.Code,
@@ -39,7 +48,7 @@ func (ch *CustomersHandler) GetCustomerHandler(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusCreated).JSON(
 		&models.CustomerDetailResponse{
-			Code:     http.StatusOK,
+			Code:     fiber.StatusOK,
 			Message:  constant.Message_ok,
 			Customer: *customerDetails,
 		})

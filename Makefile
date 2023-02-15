@@ -2,6 +2,10 @@
 create_container:
 	docker run -itd --name mysql-fiber-project -e MYSQL_ROOT_PASSWORD=root -v /home/derryrenaldy/Desktop/belajar/golang-fiber-demo/docker-volume-mysql:/var/lib/mysql -p 13306:3306 -h localhost mysql
 
+# Docker Container Start
+start_container:
+	docker container start mysql-fiber-project
+
 # Docker Delete Container Command
 delete_container:
 	docker container rm -f mysql-fiber-project
