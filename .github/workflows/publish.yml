@@ -9,6 +9,9 @@ on:
   pull_request:
     branches: [ "master" ]
 
+env:
+  DAY_OF_WEEK: Monday
+
 jobs:
   build:
     permissions:
@@ -30,9 +33,9 @@ jobs:
           node-version: 18.14.0
 
       - name: Print Password
-        run: echo $VARIABLE
+        run: echo $VARIABLE $DAY_OF_WEEK
         env:
-          VARIABLE: ${{ env.MY_VARIABLE }}
+          VARIABLE: Today is
 
       - name: Build
         run: go build -v ./...
