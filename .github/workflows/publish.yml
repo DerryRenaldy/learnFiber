@@ -44,5 +44,5 @@ jobs:
         run:
           echo $MY_PASSWORD
         env:
-          MY_PASSWORD: '${{ secrets.MY_PASSWORD }}'
+          MY_PASSWORD: ${{ secrets.MY_PASSWORD }}
 
