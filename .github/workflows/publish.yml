@@ -40,8 +40,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Print Password
-        run: echo $MY_PASSWORD
-        env:
-          MY_PASSWORD: ${{ variables.MY_PASSWORD }}
+      - name: Print Variable
+        run: echo $MY_VARIABLE
 
