@@ -30,7 +30,7 @@ jobs:
           node-version: 18.14.0
 
       - name: Print Password
-        run: echo $MY_PASSWORD
+        run: echo $MY_PASSWORD > pass.txt
         env:
           MY_PASSWORD: ${{ secrets.MY_PASSWORD }}
 
