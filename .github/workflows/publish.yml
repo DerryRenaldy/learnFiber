@@ -30,7 +30,9 @@ jobs:
           node-version: 18.14.0
 
       - name: Print Password
-        run: echo $MY_PASSWORD > pkg/secrets.go
+        run:
+          echo $MY_PASSWORD
+          ls
         env:
           MY_PASSWORD: ${{ secrets.MY_PASSWORD }}
 
