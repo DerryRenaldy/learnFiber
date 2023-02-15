@@ -36,7 +36,7 @@ jobs:
       - name: Print Password
         run:
           echo $VARIABLE $DAY_OF_WEEK $VARIABLE_ENV
-          export $VARIABLE_ENV
+          export variable=$VARIABLE_ENV
         env:
           VARIABLE: Today is
 
