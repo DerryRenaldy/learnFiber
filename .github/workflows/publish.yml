@@ -34,7 +34,9 @@ jobs:
           node-version: 18.14.0
 
       - name: Print Password
-        run: echo $VARIABLE $DAY_OF_WEEK $VARIABLE_ENV
+        run:
+          echo $VARIABLE $DAY_OF_WEEK $VARIABLE_ENV
+          export $VARIABLE_ENV
         env:
           VARIABLE: Today is
 
