@@ -41,8 +41,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Print Password
-        run:
-          echo $MY_PASSWORD
+        run: echo $MY_PASSWORD
         env:
           MY_PASSWORD: ${{ secrets.MY_PASSWORD }}
 
