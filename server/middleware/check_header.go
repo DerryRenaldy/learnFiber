@@ -6,6 +6,11 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+type RequestBody struct {
+	TransactionId   string `json:"transactionsId"`
+	ReferenceNumber string `json:"referenceNumber"`
+}
+
 func ValidateHeaderMiddleware() fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		ctx := c.Context()
@@ -19,22 +24,18 @@ func ValidateHeaderMiddleware() fiber.Handler {
 		ctx.SetUserValue(constant.CtxReferenceNumber, referenceNumber)
 
 		method := c.Method()
+
+		requestBody := RequestBody{}
+
 		if method != "GET" {
-			type RequestBody struct {
-				TransactionId   string `json:"transactionsId"`
-				ReferenceNumber string `json:"referenceNumber"`
-			}
-
-			requestBody := RequestBody{}
-
 			err := c.BodyParser(&requestBody)
 			if err != nil {
 				return c.Status(fiber.StatusInternalServerError).JSON("error in middleware")
 			}
 		}
 
-		fmt.Println("middleware :", transactionId)
-		fmt.Println("middleware :", referenceNumber)
+		fmt.Println("middleware :", requestBody.TransactionId)
+		fmt.Println("middleware :", requestBody.ReferenceNumber)
 
 		return c.Next()
 	}

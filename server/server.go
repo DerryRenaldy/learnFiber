@@ -62,7 +62,7 @@ func (s Server) Start() {
 	v1.Get("/", s.handlerV1.GetCustomerHandler)
 
 	v2 := app.Group("/api/v2")
-	//v2.Use(middleware.ValidateHeaderMiddleware())
+	v2.Use(middleware.ValidateHeaderMiddleware())
 	v2.Post("/", s.handlerV2.CreateCustomerHandler)
 
 	app.Listen(":3000")
