@@ -37,7 +37,7 @@ func (ch *CustomersHandler) GetCustomerHandler(c *fiber.Ctx) error {
 	var customerDetails *models.CustomerDetailItem
 
 	if value == nil {
-		return c.Status(fiber.StatusCreated).JSON(
+		return c.Status(fiber.StatusOK).JSON(
 			&NoCustomer{
 				Code:     fiber.StatusOK,
 				Message:  http.StatusText(fiber.StatusOK),
@@ -59,7 +59,7 @@ func (ch *CustomersHandler) GetCustomerHandler(c *fiber.Ctx) error {
 	fmt.Println("Handler :", transactionId)
 	fmt.Println("Handler :", referenceNumber)
 
-	return c.Status(fiber.StatusCreated).JSON(
+	return c.Status(fiber.StatusOK).JSON(
 		&models.CustomerDetailResponse{
 			Code:     fiber.StatusOK,
 			Message:  constant.Message_ok,

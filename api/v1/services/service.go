@@ -21,6 +21,7 @@ func New(customerRepo customer.CRepository, log logger.ILogger) *service {
 	return obj
 }
 
+//go:generate mockgen -source=./service.go -destination ./service_mocks.go -package=services
 type IService interface {
 	GetCustomer(ctx context.Context, req forms.GetRequest) (*entity.Customer, error)
 }

@@ -13,6 +13,7 @@ func (s service) GetCustomer(ctx context.Context, req forms.GetRequest) (*entity
 	functionName := "service.GetCustomer"
 	var resCusObj *entity.Customer
 	if err := req.Validate(); err != nil {
+		s.l.Errorf("[%s - req.Validate] : %s", functionName, err)
 		return nil, fiber.ErrInternalServerError
 	}
 

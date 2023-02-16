@@ -49,7 +49,7 @@ func New(logger logger.ILogger) *Server {
 }
 
 func (s Server) Start() {
-	app := fiber.New(fiber.Config{ColorScheme: fiber.DefaultColors, DisableKeepalive: true, Prefork: true})
+	app := fiber.New()
 	v1 := app.Group("/api/v1")
 	v1.Use(middleware.ValidateHeaderMiddleware())
 

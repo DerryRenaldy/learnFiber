@@ -18,4 +18,7 @@ const (
 	ErrMerchantCode     = "PRECONDITION_FAILED_MERCHANT_CODE"
 	ErrNotFoundCustomer = "NOT_FOUND_CUSTOMER"
 	ErrSqlError         = "SQL_ERROR"
+
+	Succeed = "\u2713"
+	Failed  = "\u2717"
 )
