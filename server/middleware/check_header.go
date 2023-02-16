@@ -21,7 +21,7 @@ func ValidateHeaderMiddleware() fiber.Handler {
 		method := c.Method()
 		if method != "GET" {
 			type RequestBody struct {
-				TransactionId   string `json:"transactionId"`
+				TransactionId   string `json:"transactionsId"`
 				ReferenceNumber string `json:"referenceNumber"`
 			}
 

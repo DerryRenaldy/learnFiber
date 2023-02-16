@@ -2,8 +2,10 @@ package server
 
 import (
 	"database/sql"
-	"github.com/DerryRenaldy/learnFiber/api/v1/handlers"
-	"github.com/DerryRenaldy/learnFiber/api/v1/services"
+	handlerV1 "github.com/DerryRenaldy/learnFiber/api/v1/handlers"
+	serviceV1 "github.com/DerryRenaldy/learnFiber/api/v1/services"
+	handlerV2 "github.com/DerryRenaldy/learnFiber/api/v2/handlers"
+	serviceV2 "github.com/DerryRenaldy/learnFiber/api/v2/services"
 	"github.com/DerryRenaldy/learnFiber/pkg/database"
 	"github.com/DerryRenaldy/learnFiber/server/middleware"
 	"github.com/DerryRenaldy/learnFiber/store/mysql/customer"
@@ -12,9 +14,11 @@ import (
 )
 
 type Server struct {
-	logger  logger.ILogger
-	service services.IService
-	handler handlers.CustomersHandlerInterface
+	logger    logger.ILogger
+	serviceV1 serviceV1.IService
+	handlerV1 handlerV1.CustomersHandlerInterface
+	serviceV2 serviceV2.IService
+	handlerV2 handlerV2.CustomersHandlerInterface
 }
 
 var SVR *Server
@@ -30,9 +34,11 @@ func (s *Server) Register() {
 
 	customerstore := customer.NewCustomerStoreImpl(s.logger, db)
 
-	s.service = services.New(customerstore, s.logger)
+	s.serviceV1 = serviceV1.New(customerstore, s.logger)
+	s.serviceV2 = serviceV2.New(customerstore, s.logger)
 
-	s.handler = handlers.NewCustomerHttpHandler(s.logger, s.service)
+	s.handlerV1 = handlerV1.NewCustomerHttpHandler(s.logger, s.serviceV1)
+	s.handlerV2 = handlerV2.NewCustomerHttpHandler(s.logger, s.serviceV2)
 }
 
 func New(logger logger.ILogger) *Server {
@@ -53,7 +59,11 @@ func (s Server) Start() {
 	v1 := app.Group("/api/v1")
 	v1.Use(middleware.ValidateHeaderMiddleware())
 
-	v1.Get("/", s.handler.GetCustomerHandler)
+	v1.Get("/", s.handlerV1.GetCustomerHandler)
+
+	v2 := app.Group("/api/v2")
+	//v2.Use(middleware.ValidateHeaderMiddleware())
+	v2.Post("/", s.handlerV2.CreateCustomerHandler)
 
 	app.Listen(":3000")
 }

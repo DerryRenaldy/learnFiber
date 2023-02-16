@@ -13,3 +13,14 @@ type CustomerDetailItem struct {
 	Email        string `json:"email"`
 	Status       int    `json:"status"`
 }
+
+type CreateCustomerResponse struct {
+	Code     int                  `json:"code"`
+	Message  string               `json:"message"`
+	Customer CreateCustomerDetail `json:"customer"`
+}
+
+type CreateCustomerDetail struct {
+	Id     string `json:"id"`
+	Status int    `json:"status"`
+}

@@ -65,5 +65,4 @@ func (ch *CustomersHandler) GetCustomerHandler(c *fiber.Ctx) error {
 			Message:  constant.Message_ok,
 			Customer: *customerDetails,
 		})
-
 }

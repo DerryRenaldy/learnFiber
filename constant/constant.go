@@ -19,6 +19,7 @@ const (
 	ErrNotFoundCustomer = "NOT_FOUND_CUSTOMER"
 	ErrSqlError         = "SQL_ERROR"
 
-	Succeed = "\u2713"
-	Failed  = "\u2717"
+	Succeed              = "\u2713"
+	Failed               = "\u2717"
+	CustomerStatusActive = 1
 )
