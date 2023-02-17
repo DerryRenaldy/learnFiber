@@ -1,16 +1,16 @@
 package services
 
 import (
-	"context"
 	"github.com/DerryRenaldy/learnFiber/constant"
 	"github.com/DerryRenaldy/learnFiber/entity"
 	"github.com/DerryRenaldy/learnFiber/forms"
 	"github.com/gofiber/fiber/v2"
+	"github.com/valyala/fasthttp"
 	"strconv"
 	"strings"
 )
 
-func (s service) Create(ctx context.Context, req forms.CreateRequest) (*entity.Customer, error) {
+func (s service) Create(ctx *fasthttp.RequestCtx, req forms.CreateRequest) (*entity.Customer, error) {
 	functionName := "service.Create"
 
 	if err := req.Validate(); err != nil {
@@ -65,6 +65,12 @@ func (s service) Create(ctx context.Context, req forms.CreateRequest) (*entity.C
 	emailStatus, err := s.customerRepo.SaveEmail(ctx, customerObj)
 	if err != nil && !emailStatus {
 		s.l.Errorf("[%s - s.customerRepo.SaveEmail] : %s", functionName, err)
+		return nil, fiber.ErrInternalServerError
+	}
+
+	err = s.redis.Set(ctx, customerObj)
+	if err != nil {
+		s.l.Errorf("[%s - s.redis.Set] : %s", functionName, err)
 		return nil, fiber.ErrInternalServerError
 	}
 

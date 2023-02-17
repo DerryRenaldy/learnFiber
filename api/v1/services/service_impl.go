@@ -1,15 +1,15 @@
 package services
 
 import (
-	"context"
 	"database/sql"
 	"github.com/DerryRenaldy/learnFiber/entity"
 	"github.com/DerryRenaldy/learnFiber/forms"
 	"github.com/gofiber/fiber/v2"
+	"github.com/valyala/fasthttp"
 )
 
 // GetCustomer Gets customer details by using phone number and merchant code
-func (s service) GetCustomer(ctx context.Context, req forms.GetRequest) (*entity.Customer, error) {
+func (s service) GetCustomer(ctx *fasthttp.RequestCtx, req forms.GetRequest) (*entity.Customer, error) {
 	functionName := "service.GetCustomer"
 	var resCusObj *entity.Customer
 	if err := req.Validate(); err != nil {
@@ -30,6 +30,14 @@ func (s service) GetCustomer(ctx context.Context, req forms.GetRequest) (*entity
 		s.l.Errorf("[%s - s.customerRepo.GetByPhoneNumber)] : %s", functionName, err)
 		return nil, fiber.ErrInternalServerError
 	}
+
+	data, err := s.redisCache.GetByCode(ctx, resCusObj.ID)
+	if err != nil {
+		s.l.Errorf("[%s - s.redisCache] : %s", functionName, err)
+	}
+
+	s.l.Infof("[data from cache] : %s", data)
+
 	customerObj.ID = resCusObj.ID
 	customerObj.Code = resCusObj.Code
 	customerObj.MerchantCode = resCusObj.MerchantCode

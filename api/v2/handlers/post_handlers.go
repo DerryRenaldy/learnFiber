@@ -24,6 +24,12 @@ func (ch *CustomersHandler) CreateCustomerHandler(c *fiber.Ctx) error {
 	functionName := "CustomersHandler.CreateCustomerHandler"
 	ctx := c.Context()
 
+	ctx.Deadline()
+	fmt.Println(c.GetReqHeaders())
+	c.Set("X-My-Header", "Hello from middleware")
+
+	fmt.Println(c.Get("X-My-Header"))
+
 	payload := &forms.CreateRequest{}
 	if err := c.BodyParser(payload); err != nil {
 		ch.l.Errorf("[%s - c.BodyParser] : %s", functionName, err)
@@ -87,8 +93,6 @@ func (ch *CustomersHandler) CreateCustomerHelper(ctx *fasthttp.RequestCtx, paylo
 	var err error
 
 	payload.MerchantCode = strings.ToUpper(payload.MerchantCode)
-
-	fmt.Println(payload)
 
 	vTrxIdRefNumber := pkg.ValidateTxnIdRefNum(ctx, payload.TransactionsId, payload.ReferenceNumber)
 	if vTrxIdRefNumber != nil {

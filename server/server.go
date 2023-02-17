@@ -2,15 +2,21 @@ package server
 
 import (
 	"database/sql"
+	"fmt"
 	handlerV1 "github.com/DerryRenaldy/learnFiber/api/v1/handlers"
 	serviceV1 "github.com/DerryRenaldy/learnFiber/api/v1/services"
 	handlerV2 "github.com/DerryRenaldy/learnFiber/api/v2/handlers"
 	serviceV2 "github.com/DerryRenaldy/learnFiber/api/v2/services"
 	"github.com/DerryRenaldy/learnFiber/pkg/database"
+	redisClients "github.com/DerryRenaldy/learnFiber/pkg/redis"
 	"github.com/DerryRenaldy/learnFiber/server/middleware"
 	"github.com/DerryRenaldy/learnFiber/store/mysql/customer"
+	customercache "github.com/DerryRenaldy/learnFiber/store/redis/customer"
 	"github.com/DerryRenaldy/logger/logger"
+	"github.com/go-redis/redis/v8"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/idempotency"
+	"time"
 )
 
 type Server struct {
@@ -23,19 +29,28 @@ type Server struct {
 
 var SVR *Server
 var db *sql.DB
+var redisClient *redis.Client
 
 func (s *Server) Register() {
-	//MYSQL
+	// MYSQL
 	dbconnection := database.NewDatabaseConnection(s.logger)
 	db = dbconnection.DBConnect()
 	if db == nil {
 		s.logger.Fatal("Expecting db connection object but received nil")
 	}
 
-	customerstore := customer.NewCustomerStoreImpl(s.logger, db)
+	// REDIS
+	redisConnection := redisClients.NewRedisConnection(s.logger)
+	redisClient = redisConnection.RedisConnect()
+	if redisClient == nil {
+		s.logger.Fatal("Expecting db connection object but received nil")
+	}
+	redisCacheObj := customercache.NewRedis(redisClient, "fiber-project", 60*time.Second, s.logger)
 
-	s.serviceV1 = serviceV1.New(customerstore, s.logger)
-	s.serviceV2 = serviceV2.New(customerstore, s.logger)
+	customerStore := customer.NewCustomerStoreImpl(s.logger, db)
+
+	s.serviceV1 = serviceV1.New(customerStore, s.logger, redisCacheObj)
+	s.serviceV2 = serviceV2.New(customerStore, s.logger, redisCacheObj)
 
 	s.handlerV1 = handlerV1.NewCustomerHttpHandler(s.logger, s.serviceV1)
 	s.handlerV2 = handlerV2.NewCustomerHttpHandler(s.logger, s.serviceV2)
@@ -55,7 +70,9 @@ func New(logger logger.ILogger) *Server {
 }
 
 func (s Server) Start() {
-	app := fiber.New()
+	app := fiber.New(fiber.Config{
+		Immutable: true,
+	})
 	v1 := app.Group("/api/v1")
 	v1.Use(middleware.ValidateHeaderMiddleware())
 
@@ -63,7 +80,15 @@ func (s Server) Start() {
 
 	v2 := app.Group("/api/v2")
 	v2.Use(middleware.ValidateHeaderMiddleware())
+	v2.Use(idempotency.New(
+		idempotency.Config{
+			KeyHeader: "X-Idempotency-Key",
+		}))
 	v2.Post("/", s.handlerV2.CreateCustomerHandler)
+	v2.Post("/test", func(ctx *fiber.Ctx) error {
+		ctx.Set("X-My-Header", "Hello from middleware")
+		return ctx.SendString(fmt.Sprintf("header is: %s", ctx.Get("X-Idempotency-Key")))
+	})
 
 	app.Listen(":3000")
 }

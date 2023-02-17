@@ -36,17 +36,17 @@ func (m *MockIService) EXPECT() *MockIServiceMockRecorder {
 	return m.recorder
 }
 
-// GetCustomer mocks base method.
-func (m *MockIService) GetCustomer(ctx *fasthttp.RequestCtx, req forms.GetRequest) (*entity.Customer, error) {
+// Create mocks base method.
+func (m *MockIService) Create(ctx *fasthttp.RequestCtx, req forms.CreateRequest) (*entity.Customer, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetCustomer", ctx, req)
+	ret := m.ctrl.Call(m, "Create", ctx, req)
 	ret0, _ := ret[0].(*entity.Customer)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetCustomer indicates an expected call of GetCustomer.
-func (mr *MockIServiceMockRecorder) GetCustomer(ctx, req interface{}) *gomock.Call {
+// Create indicates an expected call of Create.
+func (mr *MockIServiceMockRecorder) Create(ctx, req interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCustomer", reflect.TypeOf((*MockIService)(nil).GetCustomer), ctx, req)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockIService)(nil).Create), ctx, req)
 }

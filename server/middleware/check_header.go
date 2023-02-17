@@ -16,6 +16,7 @@ func ValidateHeaderMiddleware() fiber.Handler {
 		ctx := c.Context()
 
 		c.Set(constant.HeaderContentType, constant.MIMEApplicationJson)
+		c.Set("X-My-Header", "Hello from middleware")
 
 		transactionId := c.Query("transactionId")
 		referenceNumber := c.Query("referenceNumber")
