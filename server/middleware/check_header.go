@@ -37,6 +37,8 @@ func ValidateHeaderMiddleware() fiber.Handler {
 
 		fmt.Println("middleware :", requestBody.TransactionId)
 		fmt.Println("middleware :", requestBody.ReferenceNumber)
+		fmt.Println("middleware :", transactionId)
+		fmt.Println("middleware :", referenceNumber)
 
 		return c.Next()
 	}
