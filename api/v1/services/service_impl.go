@@ -24,10 +24,10 @@ func (s service) GetCustomer(ctx *fasthttp.RequestCtx, req forms.GetRequest) (*e
 
 	resCusObj, err := s.customerRepo.GetByPhoneNumber(ctx, customerObj)
 	if err == sql.ErrNoRows {
-		s.l.Errorf("[%s - s.customerRepo.GetByPhoneNumber(NoRow)] : %s", functionName, err)
+		s.l.Panicf("[%s - s.customerRepo.GetByPhoneNumber(NoRow)] : %s", functionName, err)
 		return nil, nil
 	} else if err != nil {
-		s.l.Errorf("[%s - s.customerRepo.GetByPhoneNumber)] : %s", functionName, err)
+		s.l.Panicf("[%s - s.customerRepo.GetByPhoneNumber)] : %s", functionName, err)
 		return nil, fiber.ErrInternalServerError
 	}
 

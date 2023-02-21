@@ -3,6 +3,9 @@ package server
 import (
 	"database/sql"
 	"fmt"
+	"log"
+	"time"
+
 	handlerV1 "github.com/DerryRenaldy/learnFiber/api/v1/handlers"
 	serviceV1 "github.com/DerryRenaldy/learnFiber/api/v1/services"
 	handlerV2 "github.com/DerryRenaldy/learnFiber/api/v2/handlers"
@@ -16,7 +19,7 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/idempotency"
-	"time"
+	"github.com/gofiber/fiber/v2/middleware/recover"
 )
 
 type Server struct {
@@ -74,11 +77,13 @@ func (s Server) Start() {
 		Immutable: true,
 	})
 	v1 := app.Group("/api/v1")
+	v1.Use(recover.New())
 	v1.Use(middleware.ValidateHeaderMiddleware())
 
 	v1.Get("/", s.handlerV1.GetCustomerHandler)
 
 	v2 := app.Group("/api/v2")
+	v2.Use(recover.New())
 	v2.Use(middleware.ValidateHeaderMiddleware())
 	v2.Use(idempotency.New(
 		idempotency.Config{
@@ -89,6 +94,8 @@ func (s Server) Start() {
 		ctx.Set("X-My-Header", "Hello from middleware")
 		return ctx.SendString(fmt.Sprintf("header is: %s", ctx.Get("X-Idempotency-Key")))
 	})
+
+	log.Print("Hello from Cloud Run! The container started successfully and is listening for HTTP requests on $PORT")
 
 	app.Listen(":3000")
 }
