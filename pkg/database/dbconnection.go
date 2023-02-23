@@ -19,10 +19,14 @@ func NewDatabaseConnection(logger logger.ILogger) *Connection {
 }
 
 func (db *Connection) DBConnect() *sql.DB {
+	//dbUri := fmt.Sprintf("host=%s user=%s password=%s port=%s database=%s",
+	//	"localhost", "root", "root", "13306", "customers")
 
-	dbConn, errConn := sql.Open("mysql", "root:root@tcp(localhost:13306)/customers")
+	dbConn, errConn := sql.Open("mysql",
+		"root:root@unix(/cloudsql/kubernetes-gcp-378606:asia-southeast2:mysql-diber-project)/customers")
 
 	if errConn != nil {
+
 		db.l.Fatalf("Error while connecting database. err= %v", errConn.Error())
 		return nil
 	}

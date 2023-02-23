@@ -3,6 +3,7 @@ package server
 import (
 	"database/sql"
 	"fmt"
+	"github.com/DerryRenaldy/learnFiber/pkg/database"
 	"log"
 	"time"
 
@@ -10,7 +11,6 @@ import (
 	serviceV1 "github.com/DerryRenaldy/learnFiber/api/v1/services"
 	handlerV2 "github.com/DerryRenaldy/learnFiber/api/v2/handlers"
 	serviceV2 "github.com/DerryRenaldy/learnFiber/api/v2/services"
-	"github.com/DerryRenaldy/learnFiber/pkg/database"
 	redisClients "github.com/DerryRenaldy/learnFiber/pkg/redis"
 	"github.com/DerryRenaldy/learnFiber/server/middleware"
 	"github.com/DerryRenaldy/learnFiber/store/mysql/customer"
