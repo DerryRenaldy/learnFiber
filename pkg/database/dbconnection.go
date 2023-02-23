@@ -2,8 +2,10 @@ package database
 
 import (
 	"database/sql"
+	"fmt"
 	"github.com/DerryRenaldy/logger/logger"
 	_ "github.com/go-sql-driver/mysql"
+	"os"
 )
 
 type Connection struct {
@@ -19,8 +21,13 @@ func NewDatabaseConnection(logger logger.ILogger) *Connection {
 }
 
 func (db *Connection) DBConnect() *sql.DB {
-	dbConn, errConn := sql.Open("mysql",
-		"root:root@unix(/cloudsql/kubernetes-gcp-378606:asia-southeast2:mysql-diber-project)/customers")
+	username := os.Getenv("USERNAME")
+	password := os.Getenv("PASS")
+	connectionType := os.Getenv("CONTYPE")
+	connectionName := os.Getenv("CONNAME")
+	database := os.Getenv("DATABASE")
+
+	dbConn, errConn := sql.Open("mysql", fmt.Sprintf("%s:%s@%s(%s)/%s", username, password, connectionType, connectionName, database))
 
 	if errConn != nil {
 
