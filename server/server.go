@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/DerryRenaldy/learnFiber/pkg/database"
+	"github.com/DerryRenaldy/learnFiber/pkg/tracer"
 	"log"
 	"time"
 
@@ -73,6 +74,9 @@ func New(logger logger.ILogger) *Server {
 }
 
 func (s Server) Start() {
+	// Init Tracer
+	tracer.New(true, "kubernetes-gcp-378606", "golang-fiber-project", SVR.logger)
+
 	app := fiber.New(fiber.Config{
 		Immutable: true,
 	})

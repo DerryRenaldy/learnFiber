@@ -1,15 +1,15 @@
 package services
 
 import (
+	"context"
 	"database/sql"
 	"github.com/DerryRenaldy/learnFiber/entity"
 	"github.com/DerryRenaldy/learnFiber/forms"
 	"github.com/gofiber/fiber/v2"
-	"github.com/valyala/fasthttp"
 )
 
 // GetCustomer Gets customer details by using phone number and merchant code
-func (s service) GetCustomer(ctx *fasthttp.RequestCtx, req forms.GetRequest) (*entity.Customer, error) {
+func (s service) GetCustomer(ctx context.Context, req forms.GetRequest) (*entity.Customer, error) {
 	functionName := "service.GetCustomer"
 	var resCusObj *entity.Customer
 	if err := req.Validate(); err != nil {
