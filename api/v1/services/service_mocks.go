@@ -5,12 +5,12 @@
 package services
 
 import (
+	context "context"
 	reflect "reflect"
 
 	entity "github.com/DerryRenaldy/learnFiber/entity"
 	forms "github.com/DerryRenaldy/learnFiber/forms"
 	gomock "github.com/golang/mock/gomock"
-	fasthttp "github.com/valyala/fasthttp"
 )
 
 // MockIService is a mock of IService interface.
@@ -37,7 +37,7 @@ func (m *MockIService) EXPECT() *MockIServiceMockRecorder {
 }
 
 // GetCustomer mocks base method.
-func (m *MockIService) GetCustomer(ctx *fasthttp.RequestCtx, req forms.GetRequest) (*entity.Customer, error) {
+func (m *MockIService) GetCustomer(ctx context.Context, req forms.GetRequest) (*entity.Customer, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetCustomer", ctx, req)
 	ret0, _ := ret[0].(*entity.Customer)
