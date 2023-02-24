@@ -18,7 +18,7 @@ type CustomerCache struct {
 	timeout   time.Duration
 }
 
-func (o CustomerCache) getCtx(ctx *fasthttp.RequestCtx) (context.Context, context.CancelFunc) {
+func (o CustomerCache) getCtx(ctx context.Context) (context.Context, context.CancelFunc) {
 	return context.WithTimeout(ctx, 10*time.Second)
 }
 
@@ -26,7 +26,7 @@ func (o CustomerCache) redisKey(CustomerID int64) string {
 	return fmt.Sprintf("%v:Customer:%v", o.namespace, CustomerID)
 }
 
-func (o CustomerCache) GetByCode(ctx *fasthttp.RequestCtx, CustomerID int64) (*entity.Customer, error) {
+func (o CustomerCache) GetByCode(ctx context.Context, CustomerID int64) (*entity.Customer, error) {
 	var cancel context.CancelFunc
 	cont := context.Background()
 	cont, cancel = o.getCtx(ctx)

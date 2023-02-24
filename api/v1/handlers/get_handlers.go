@@ -6,6 +6,7 @@ import (
 	"github.com/DerryRenaldy/learnFiber/errors"
 	"github.com/DerryRenaldy/learnFiber/forms"
 	"github.com/DerryRenaldy/learnFiber/models"
+	"github.com/DerryRenaldy/learnFiber/pkg/tracer"
 	"github.com/gofiber/fiber/v2"
 	"net/http"
 )
@@ -17,6 +18,9 @@ type NoCustomer struct {
 }
 
 func (ch *CustomersHandler) GetCustomerHandler(c *fiber.Ctx) error {
+	childCtx, span := tracer.StartSpan(c.Context(), "CustomersHandler.GetCustomerHandler")
+	defer span.End()
+
 	phoneNumber := c.Query("phoneNumber")
 	merchantCode := c.Query("merchantCode")
 
@@ -24,7 +28,7 @@ func (ch *CustomersHandler) GetCustomerHandler(c *fiber.Ctx) error {
 		MerchantCode: merchantCode,
 		PhoneNumber:  phoneNumber,
 	}
-	value, err := ch.Service.GetCustomer(c.Context(), req)
+	value, err := ch.Service.GetCustomer(childCtx, req)
 	if err != nil {
 		ch.l.Errorf("Error when getting data : [%s]", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(&errors.CommonError{
@@ -53,8 +57,15 @@ func (ch *CustomersHandler) GetCustomerHandler(c *fiber.Ctx) error {
 		}
 	}
 
-	transactionId := c.Context().Value(constant.CtxTransactionId)
-	referenceNumber := c.Context().Value(constant.CtxReferenceNumber)
+	transactionId := c.Context().Value(constant.CtxTransactionId).(string)
+	referenceNumber := c.Context().Value(constant.CtxReferenceNumber).(string)
+
+	spanAttributes := map[string]string{
+		constant.CtxTransactionId:   transactionId,
+		constant.CtxReferenceNumber: referenceNumber,
+	}
+
+	tracer.SetSpanAttributes(span, spanAttributes)
 
 	fmt.Println("Handler :", transactionId)
 	fmt.Println("Handler :", referenceNumber)

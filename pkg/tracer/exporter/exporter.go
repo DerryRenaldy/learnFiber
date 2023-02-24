@@ -3,6 +3,7 @@ package logexporter
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"github.com/DerryRenaldy/logger/logger"
 
 	"go.opentelemetry.io/otel/attribute"
@@ -56,11 +57,12 @@ func (e *LogExporter) ExportSpans(ctx context.Context, spans []sdktrace.ReadOnly
 	}
 
 	out, err := json.Marshal(results)
+	fmt.Println(string(out))
 	if err != nil {
 		e.l.Errorf("failed to export span: %w", err)
 		return err
 	}
-	fields := []map[string]string{}
+	fields := []map[string]interface{}{}
 	err = json.Unmarshal(out, &fields)
 	if err != nil {
 		e.l.Errorf("failed to export span: %w", err)
