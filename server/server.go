@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"github.com/DerryRenaldy/learnFiber/pkg/database"
 	"github.com/DerryRenaldy/learnFiber/pkg/tracer"
+	"github.com/go-redis/redis/v8"
+	"github.com/gofiber/contrib/otelfiber"
+	"github.com/gofiber/fiber/v2"
 	"log"
 	"time"
 
@@ -17,8 +20,6 @@ import (
 	"github.com/DerryRenaldy/learnFiber/store/mysql/customer"
 	customercache "github.com/DerryRenaldy/learnFiber/store/redis/customer"
 	"github.com/DerryRenaldy/logger/logger"
-	"github.com/go-redis/redis/v8"
-	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/idempotency"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 )
@@ -82,12 +83,14 @@ func (s Server) Start() {
 	})
 	v1 := app.Group("/api/v1")
 	v1.Use(recover.New())
+	v1.Use(otelfiber.Middleware())
 	v1.Use(middleware.ValidateHeaderMiddleware())
 
 	v1.Get("/", s.handlerV1.GetCustomerHandler)
 
 	v2 := app.Group("/api/v2")
 	v2.Use(recover.New())
+	v2.Use(otelfiber.Middleware())
 	v2.Use(middleware.ValidateHeaderMiddleware())
 	v2.Use(idempotency.New(
 		idempotency.Config{
@@ -101,5 +104,5 @@ func (s Server) Start() {
 
 	log.Print("Hello from Cloud Run! The container started successfully and is listening for HTTP requests on $PORT")
 
-	app.Listen(":3000")
+	app.Listen(":3001")
 }
