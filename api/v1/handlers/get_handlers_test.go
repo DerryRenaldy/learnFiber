@@ -2,10 +2,12 @@ package handlers
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"github.com/DerryRenaldy/learnFiber/api/v1/services"
 	"github.com/DerryRenaldy/learnFiber/constant"
 	"github.com/DerryRenaldy/learnFiber/entity"
+	"github.com/DerryRenaldy/learnFiber/server/middleware"
 	"github.com/DerryRenaldy/logger/logger"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang/mock/gomock"
@@ -28,8 +30,10 @@ func TestCustomersHandler_GetCustomerHandler(t *testing.T) {
 
 	actualPath := "/api/v1"
 
-	app := fiber.New()
-	app.Get(actualPath, ch.GetCustomerHandler)
+	app := fiber.New(fiber.Config{
+		Immutable: true,
+	})
+	app.Get(actualPath, middleware.ValidateHeaderMiddleware(), ch.GetCustomerHandler)
 
 	tests := []struct {
 		name                  string
@@ -107,6 +111,9 @@ func TestCustomersHandler_GetCustomerHandler(t *testing.T) {
 			rbody, _ := json.Marshal(tt.requestBody)
 			request := httptest.NewRequest(tt.method, tt.path, bytes.NewReader(rbody))
 			request.Header.Add(`Content-Type`, `application/json`)
+			ctx := request.Context()
+			ctx = context.WithValue(ctx, constant.CtxTransactionId, "transactionIdTest")
+			ctx = context.WithValue(ctx, constant.CtxReferenceNumber, "referenceNumberTest")
 
 			response, _ := app.Test(request)
 

@@ -57,15 +57,15 @@ func (ch *CustomersHandler) GetCustomerHandler(c *fiber.Ctx) error {
 		}
 	}
 
-	transactionId := c.Context().Value(constant.CtxTransactionId)
-	referenceNumber := c.Context().Value(constant.CtxReferenceNumber)
+	transactionId := childCtx.Value(constant.CtxTransactionId).(string)
+	referenceNumber := childCtx.Value(constant.CtxReferenceNumber).(string)
 
-	//spanAttributes := map[string]string{
-	//	constant.CtxTransactionId:   transactionId,
-	//	constant.CtxReferenceNumber: referenceNumber,
-	//}
+	spanAttributes := map[string]string{
+		constant.CtxTransactionId:   transactionId,
+		constant.CtxReferenceNumber: referenceNumber,
+	}
 
-	//tracer.SetSpanAttributes(span, spanAttributes)
+	tracer.SetSpanAttributes(span, spanAttributes)
 
 	fmt.Println("Handler :", transactionId)
 	fmt.Println("Handler :", referenceNumber)
