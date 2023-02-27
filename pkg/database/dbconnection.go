@@ -20,7 +20,7 @@ func NewDatabaseConnection(logger logger.ILogger) *Connection {
 
 func (db *Connection) DBConnect() *sql.DB {
 	dbConn, errConn := sql.Open("mysql",
-		"root:root@tcp(localhost:13306)/customers")
+		"root:root@tcp(10.80.14.7:3306)/customers")
 
 	if errConn != nil {
 

@@ -104,5 +104,5 @@ func (s Server) Start() {
 
 	log.Print("Hello from Cloud Run! The container started successfully and is listening for HTTP requests on $PORT")
 
-	app.Listen(":3001")
+	app.Listen(":3000")
 }
