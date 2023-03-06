@@ -1,10 +1,12 @@
 package services
 
 import (
+	"context"
 	customerV2 "github.com/DerryRenaldy/learnFiber/api/v2/repository/customer"
 	"github.com/DerryRenaldy/learnFiber/api/v2/repository/customer_cache"
 	"github.com/DerryRenaldy/learnFiber/entity"
 	"github.com/DerryRenaldy/learnFiber/forms"
+	"github.com/DerryRenaldy/learnFiber/models"
 	"github.com/DerryRenaldy/logger/logger"
 	"github.com/valyala/fasthttp"
 )
@@ -27,4 +29,5 @@ func New(customerRepo customerV2.CRepository, log logger.ILogger, redisClient cu
 //go:generate mockgen -source=./service.go -destination ./service_mocks.go -package=services
 type IService interface {
 	Create(ctx *fasthttp.RequestCtx, req forms.CreateRequest) (*entity.Customer, error)
+	UpdateByCustomerId(ctx context.Context, req forms.UpdateRequest) (*models.CustomerItemUpdate, error)
 }

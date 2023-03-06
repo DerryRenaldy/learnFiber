@@ -97,6 +97,7 @@ func (s Server) Start() {
 			KeyHeader: "X-Idempotency-Key",
 		}))
 	v2.Post("/", s.handlerV2.CreateCustomerHandler)
+	v2.Patch("/status", s.handlerV2.UpdateCustomerHandler)
 	v2.Post("/test", func(ctx *fiber.Ctx) error {
 		ctx.Set("X-My-Header", "Hello from middleware")
 		return ctx.SendString(fmt.Sprintf("header is: %s", ctx.Get("X-Idempotency-Key")))
@@ -104,5 +105,5 @@ func (s Server) Start() {
 
 	log.Print("Hello from Cloud Run! The container started successfully and is listening for HTTP requests on $PORT")
 
-	app.Listen(":3001")
+	app.Listen(":3000")
 }

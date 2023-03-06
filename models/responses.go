@@ -24,3 +24,8 @@ type CreateCustomerDetail struct {
 	Id     string `json:"id"`
 	Status int    `json:"status"`
 }
+
+type CustomerItemUpdate struct {
+	Code   string `json:"publicCustomerId"`
+	Status int    `json:"status"`
+}
