@@ -6,6 +6,9 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/DerryRenaldy/learnFiber/entity"
+	"github.com/DerryRenaldy/learnFiber/forms"
+	"github.com/DerryRenaldy/learnFiber/models"
+	"github.com/DerryRenaldy/learnFiber/pkg/tracer"
 	"github.com/DerryRenaldy/logger/logger"
 	"github.com/go-sql-driver/mysql"
 )
@@ -120,4 +123,36 @@ func (o *customerRepoImpl) SaveEmail(ctx context.Context, req *entity.Customer) 
 	}
 
 	return true, nil
+}
+
+func (o *customerRepoImpl) UpdateByCustomerId(ctx context.Context,
+	obj forms.UpdateRequest) (*models.CustomerItemUpdate, error) {
+	spanName := "customerRepoImpl.UpdateByCustomerId"
+	ctx, span := tracer.StartSpan(ctx, spanName)
+	defer span.End()
+
+	updateQuery := "UPDATE customers SET status=? WHERE code=?;"
+	_, err := o.DB.Exec(updateQuery, obj.Status, obj.PublicCustomerId)
+	if err != nil {
+		o.l.Errorf("[%s : o.DB.Exec] : %s", spanName, err)
+		return nil, err
+	}
+
+	res := new(models.CustomerItemUpdate)
+	getDetails := "SELECT code, status FROM customers WHERE code=?;"
+
+	errQueryRow := o.DB.QueryRow(getDetails, obj.PublicCustomerId).Scan(&res.Code, &res.Status)
+
+	if errQueryRow != nil {
+		if errQueryRow == sql.ErrNoRows {
+			span.AddEvent("No customer found in database")
+			o.l.Errorf("[%s : o.DB.QueryRow] : %s", spanName, err)
+			return nil, err
+		}
+		span.RecordError(errQueryRow)
+		o.l.Errorf("Error while executing statement on Query Select Get Details (Update): %v", errQueryRow)
+		return nil, errQueryRow
+	}
+
+	return res, nil
 }

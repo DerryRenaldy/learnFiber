@@ -13,6 +13,7 @@ type CustomersHandler struct {
 
 type CustomersHandlerInterface interface {
 	CreateCustomerHandler(c *fiber.Ctx) error
+	UpdateCustomerHandler(c *fiber.Ctx) error
 }
 
 func NewCustomerHttpHandler(l logger.ILogger, customerService serviceV2.IService) *CustomersHandler {

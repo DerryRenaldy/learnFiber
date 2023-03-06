@@ -1,9 +1,13 @@
 package services
 
 import (
+	"context"
 	"github.com/DerryRenaldy/learnFiber/constant"
 	"github.com/DerryRenaldy/learnFiber/entity"
 	"github.com/DerryRenaldy/learnFiber/forms"
+	"github.com/DerryRenaldy/learnFiber/models"
+	"github.com/DerryRenaldy/learnFiber/pkg/tracer"
+	"github.com/DerryRenaldy/logger/logger"
 	"github.com/gofiber/fiber/v2"
 	"github.com/valyala/fasthttp"
 	"strconv"
@@ -75,4 +79,34 @@ func (s service) Create(ctx *fasthttp.RequestCtx, req forms.CreateRequest) (*ent
 	}
 
 	return customerObj, nil
+}
+
+func (s service) UpdateByCustomerId(ctx context.Context, req forms.UpdateRequest) (*models.CustomerItemUpdate, error) {
+	childCtx, span := tracer.StartSpan(ctx, "service.UpdateStatusCustomer")
+	defer span.End()
+
+	custObj := forms.UpdateRequest{
+		PublicCustomerId: req.PublicCustomerId,
+		Status:           req.Status,
+	}
+
+	logger.Log.Infof("[Response UpdateReq] : %v", custObj)
+
+	resCustObj, err := s.customerRepo.UpdateByCustomerId(childCtx, custObj)
+
+	if err != nil {
+		span.RecordError(err)
+		if err.Error() == constant.ErrNotFoundCustomer {
+			s.l.Errorf("[Response Update - Err] : %v", err)
+			return nil, fiber.ErrInternalServerError
+		}
+		return nil, fiber.ErrInternalServerError
+	}
+
+	response := &models.CustomerItemUpdate{
+		Code:   resCustObj.Code,
+		Status: resCustObj.Status,
+	}
+
+	return response, nil
 }
